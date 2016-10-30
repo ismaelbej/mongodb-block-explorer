@@ -1,35 +1,87 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify
+import pymongo
 
 app = Flask(__name__)
 
+client = pymongo.MongoClient()
+db = client.zcashdb
+AddressTransaction = db['zecaddresstransactions']
+Blocks = db['zecblocks']
+Transactions = db['zectransactions']
+TxOutputs = db['zectxoutputs']
+
+
 @app.route('/api/v1/blockchaininfo', methods=['GET'])
 def get_blockchain_info():
-    return jsonify({'hash': '0', 'height': 0, 'prevhash': '1', 'date': ''})
+    block = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
+    block.pop('_id')
+    return jsonify(block)
+
 
 @app.route('/api/v1/block/<hash>', methods=['GET'])
 def get_block(hash):
-    return jsonify({'hash': hash, 'height': 0, 'prevhash': '1', 'transactions': ['0', '1']})
+    hashes = hash.split(",")
+    response = {}
+    for hash in hashes:
+        if len(hash) == 64:
+            block = Blocks.find_one({'hash': hash})
+        else:
+            block = Blocks.find_one({'height': int(hash)})
+        if block:
+            block.pop('_id')
+            transactions = Transactions.find({'blockhash': block['hash']}) \
+                .sort('blockindex', pymongo.ASCENDING)
+            block['tx'] = [tx['txid'] for tx in transactions]
+            response[hash] = block
+    return jsonify(response)
+
 
 @app.route('/api/v1/tx/<txid>', methods=['GET'])
 def get_transaction(txid):
-    return jsonify({'txid': txid, 'block': '0', 'height': 0, 'confirmations': 0, 'in': [], 'out': []})
+    txids = txid.split(",")
+    response = {}
+    for txid in txids:
+        tx = Transactions.find_one({'txid': txid})
+        if tx:
+            tx.pop('_id')
+            outputs = TxOutputs.find({'txid': txid}) \
+                .sort('pos', pymongo.ASCENDING)
+            tx['out'] = [output for output in outputs]
+            for output in tx['out']:
+                output.pop('_id')
+            response[txid] = tx
+    return jsonify(response)
+
 
 @app.route('/api/v1/address/<address>/balance', methods=['GET'])
 def get_address_balance(address):
     addresses = address.split(",")
     response = {}
     for address in addresses:
-        response[address] = {'confirmed': {'amount': 0},'unconfirmed': {'amount': 0}}
+        unspentOutputs = TxOutputs.find({'address': address, 'spent': False})
+        response[address] = {
+            'confirmed': {
+                'amount': sum([int(unspent['satoshis'])
+                               for unspent in unspentOutputs])
+            },
+            'unconfirmed': {
+                'amount': 0
+            }
+        }
     return jsonify(response)
+
 
 @app.route('/api/v1/address/<address>/transactions', methods=['GET'])
 def get_address_transactions(address):
     addresses = address.split(",")
     response = {}
     for address in addresses:
-        response[address] = ['0', '1']
+        transactions = AddressTransaction.find({'address': address}) \
+            .sort('txtime', pymongo.DESCENDING)
+        response[address] = [tx['txid'] for tx in transactions]
     return jsonify(response)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
