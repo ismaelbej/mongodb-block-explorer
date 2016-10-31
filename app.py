@@ -50,6 +50,11 @@ def transaction(txid):
     pass
 
 
+@app.route('/api/v1/address/<address>', methods=['GET'])
+def address(address):
+    pass
+
+
 @app.route('/api/v1/blockchaininfo', methods=['GET'])
 def get_blockchain_info():
     block = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])

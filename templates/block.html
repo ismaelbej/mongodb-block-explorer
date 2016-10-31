@@ -8,10 +8,10 @@
             <section class="container" id="block-info">
                 <h5 class="title">Block Info</h5>
                 <div class="row">
-                    <div class="column column-67">
+                    <div class="column column-75">
                         <dl>
                             <dt>Hash</dt>
-                            <dd>{{ block.hash }}</dd>
+                            <dd><a href="{{ url_for('block', hash=block['hash']) }}">{{ block['hash'] }}</a></dd>
                             <dt>Height</dt>
                             <dd>{{ block.height }}</dd>
                             <dt>Difficulty</dt>
@@ -34,11 +34,20 @@
             <section class="container" id="block-txs">
                 <h5 class="title">Block Transactions</h5>
                 <div class="row">
-                    <div class="column column-67">
+                    <div class="column column-75">
                         <dl>
                             {% for tx in transactions %}
-                            <dt>Id</dt>
-                            <dd><a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dd>
+                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dt>
+                            <dd>
+                                <dl>
+                                    {% for output in tx['out'] %}
+                                    <dt>Address</dt>
+                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output['address'] }}</a></dd>
+                                    <dt>Value</dt>
+                                    <dd>{{ output['satoshis'] }}</dd>
+                                    {% endfor %}
+                                </dl>
+                            </dd>
                             {% endfor %}
                         </dl>
                     </div>
