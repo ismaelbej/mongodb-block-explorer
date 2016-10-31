@@ -28,7 +28,26 @@ def index():
 @app.route('/block/<hash>')
 def block(hash):
     block = Blocks.find_one({'hash': hash})
-    return render_template('block.html', block=block)
+    if int(block['height']) > 0:
+        prevblock = Blocks.find_one({'height': int(block['height']) - 1})
+    nextblock = Blocks.find_one({'height': int(block['height']) + 1})
+    transactions = Transactions.find({'blockhash': block['hash']}) \
+        .sort('blockindex', pymongo.ASCENDING)
+    txs = []
+    for tx in transactions:
+        txs.append(tx)
+        tx['out'] = TxOutputs.find({'txid': tx['txid']},
+                                   sort=[('pos', pymongo.ASCENDING)])
+    return render_template('block.html',
+                           block=block,
+                           transactions=txs,
+                           prevblock=prevblock,
+                           nextblock=nextblock)
+
+
+@app.route('/api/v1/transaction/<txid>', methods=['GET'])
+def transaction(txid):
+    pass
 
 
 @app.route('/api/v1/blockchaininfo', methods=['GET'])

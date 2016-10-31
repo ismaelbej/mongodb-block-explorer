@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+        <main class="wrapper">
+            <section class="container" id="title">
+                <h3 class="title">Block Explorer</h5>
+            </section>
+
+            <section class="container" id="block-info">
+                <h5 class="title">Block Info</h5>
+                <div class="row">
+                    <div class="column column-67">
+                        <dl>
+                            <dt>Hash</dt>
+                            <dd>{{ block.hash }}</dd>
+                            <dt>Height</dt>
+                            <dd>{{ block.height }}</dd>
+                            <dt>Difficulty</dt>
+                            <dd>{{ block.difficulty }}</dd>
+                            <dt>Date</dt>
+                            <dd>{{ block.time }}</dd>
+                            {% if prevblock %}
+                            <dt>Previous Block</dt>
+                            <dd><a href="{{ url_for('block', hash=prevblock['hash']) }}">Block {{ prevblock['height'] }}</a></dd>
+                            {% endif %}
+                            {% if nextblock %}
+                            <dt>Next Block</dt>
+                            <dd><a href="{{ url_for('block', hash=nextblock['hash']) }}">Block {{ nextblock['height'] }}</a></dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container" id="block-txs">
+                <h5 class="title">Block Transactions</h5>
+                <div class="row">
+                    <div class="column column-67">
+                        <dl>
+                            {% for tx in transactions %}
+                            <dt>Id</dt>
+                            <dd><a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <section class="container">
+                </section>
+            </footer>
+        </main>
+{% endblock %}
