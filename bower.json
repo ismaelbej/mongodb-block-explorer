@@ -1,0 +1,20 @@
+{
+  "name": "block-explorer",
+  "homepage": "https://github.com/ismaelbej/block-explorer",
+  "authors": [
+    "Ismael Bejarano <ismaelbej@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "ISC",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "static/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "milligram": "^1.1.0"
+  }
+}

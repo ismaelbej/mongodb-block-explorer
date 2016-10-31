@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import pymongo
 
 app = Flask(__name__)
@@ -10,6 +10,12 @@ AddressTransaction = db['zecaddresstransactions']
 Blocks = db['zecblocks']
 Transactions = db['zectransactions']
 TxOutputs = db['zectxoutputs']
+
+
+@app.route('/')
+def index():
+    block = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
+    return render_template('index.html', block=block)
 
 
 @app.route('/api/v1/blockchaininfo', methods=['GET'])

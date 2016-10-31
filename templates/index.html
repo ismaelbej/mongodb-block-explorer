@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Block Explorer | A minimalist explorer.</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/normalize.css/normalize.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/milligram/dist/milligram.min.css') }}">
+    </head>
+    <body>
+        <main class="wrapper">
+            <section class="container" id="stats">
+                <h5 class="title">Block Explorer</h5>
+                <div class="row">
+                    <div class="column">Difficulty: {{ block.difficulty }}</div>
+                    <div class="column">Height: {{ block.height }}</div>
+                    <div class="column">Block: {{ block.hash }} </div>
+                    <div class="column">Date: {{ block.time }}</div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <section class="container">
+                </section>
+            </footer>
+        </main>
+    </body>
+</html>

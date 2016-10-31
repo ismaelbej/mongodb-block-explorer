@@ -1,0 +1,22 @@
+{
+  "name": "block-explorer",
+  "version": "1.0.0",
+  "description": "Tiny block explorer on top of a mongo database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ismaelbej/block-explorer.git"
+  },
+  "author": "Ismael Bejarano <ismaelbej@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ismaelbej/block-explorer/issues"
+  },
+  "homepage": "https://github.com/ismaelbej/block-explorer#readme",
+  "devDependencies": {
+    "bower": "^1.7.9"
+  }
+}
