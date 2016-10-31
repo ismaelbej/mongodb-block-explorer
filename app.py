@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from flask import Flask, jsonify, render_template
+from flask import (Flask, jsonify, render_template,
+                   request)
 import pymongo
 
 app = Flask(__name__)
@@ -15,7 +16,19 @@ TxOutputs = db['zectxoutputs']
 @app.route('/')
 def index():
     block = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
-    return render_template('index.html', block=block)
+    recent_blocks = [
+        block for block in
+        Blocks.find(sort=[('height', pymongo.DESCENDING)], limit=10)
+    ]
+    return render_template('index.html',
+                           blockchain=block,
+                           recent_blocks=recent_blocks)
+
+
+@app.route('/block/<hash>')
+def block(hash):
+    block = Blocks.find_one({'hash': hash})
+    return render_template('block.html', block=block)
 
 
 @app.route('/api/v1/blockchaininfo', methods=['GET'])
@@ -26,7 +39,7 @@ def get_blockchain_info():
 
 
 @app.route('/api/v1/block/<hash>', methods=['GET'])
-def get_block(hash):
+def get_block_info(hash):
     hashes = hash.split(",")
     response = {}
     for hash in hashes:
@@ -40,6 +53,14 @@ def get_block(hash):
                 .sort('blockindex', pymongo.ASCENDING)
             block['tx'] = [tx['txid'] for tx in transactions]
             response[hash] = block
+    return jsonify(response)
+
+
+@app.route('/api/v1/block', methods=['GET'])
+def get_block_list():
+    limit = request.args.get('limit', 10)
+    blocks = Blocks.find().sort('height', pymongo.DESCENDING).limit(limit)
+    response = [block['hash'] for block in blocks]
     return jsonify(response)
 
 

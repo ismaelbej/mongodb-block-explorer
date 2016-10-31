@@ -1,20 +1,42 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Block Explorer | A minimalist explorer.</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/normalize.css/normalize.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/milligram/dist/milligram.min.css') }}">
-    </head>
-    <body>
+{% extends "layout.html" %}
+{% block content %}
         <main class="wrapper">
-            <section class="container" id="stats">
-                <h5 class="title">Block Explorer</h5>
+            <section class="container" id="title">
+                <h3 class="title">Block Explorer</h5>
+            </section>
+
+            <section class="container" id="blockchain-stats">
+                <h5 class="title">Blockchain stats</h5>
                 <div class="row">
-                    <div class="column">Difficulty: {{ block.difficulty }}</div>
-                    <div class="column">Height: {{ block.height }}</div>
-                    <div class="column">Block: {{ block.hash }} </div>
-                    <div class="column">Date: {{ block.time }}</div>
+                    <div class="column column-33">
+                        <dl>
+                            <dt>Difficulty</dt>
+                            <dd>{{ blockchain.difficulty }}</dd>
+                            <dt>Height</dt>
+                            <dd>{{ blockchain.height }}</dd>
+                        </dl>
+                    </div>
+                    <div class="column column-33">
+                      <dl>
+                          <!-- <dt>Block</dt>
+                          <dd><a href="{{ url_for('block', hash=blockchain.hash) }}">{{ blockchain.hash }}</a></dd> -->
+                          <dt>Date</dt>
+                          <dd>{{ blockchain.time }}</dd>
+                      </dl>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container" id="recent-blocks">
+                <h5 class="title">Recent Blocks</h5>
+                <div class="row">
+                    <div class="column column-67">
+                        <ul>
+                            {% for block in recent_blocks %}
+                            <li><a href="{{ url_for('block', hash=block.hash) }}">Block {{ block.height }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </section>
 
@@ -23,5 +45,4 @@
                 </section>
             </footer>
         </main>
-    </body>
-</html>
+{% endblock %}
