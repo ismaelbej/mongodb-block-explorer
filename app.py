@@ -49,7 +49,21 @@ def block(hash):
 
 @app.route('/api/v1/transaction/<txid>', methods=['GET'])
 def transaction(txid):
-    pass
+    transaction = Transactions.find_one({'txid': txid})
+    transaction['out'] = TxOutputs.find({'txid': transaction['txid']},
+                                        sort=[('pos', pymongo.ASCENDING)])
+    prevtransaction = Transactions.find_one({
+        'blockhash': transaction['blockhash'],
+        'blockindex': {"$lt": int(transaction['blockindex'])}},
+        sort=[('blockheight', pymongo.DESCENDING)])
+    nexttransaction = Transactions.find_one({
+        'blockhash': transaction['blockhash'],
+        'blockindex': {"$gt": int(transaction['blockindex'])}},
+        sort=[('blockheight', pymongo.ASCENDING)])
+    return render_template('transaction.html',
+                           transaction=transaction,
+                           prevtransaction=prevtransaction,
+                           nexttransaction=nexttransaction)
 
 
 @app.route('/api/v1/address/<address>', methods=['GET'])
