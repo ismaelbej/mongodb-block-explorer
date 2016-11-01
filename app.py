@@ -15,13 +15,15 @@ TxOutputs = db['zectxoutputs']
 
 @app.route('/')
 def index():
-    block = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
-    recent_blocks = [
-        block for block in
-        Blocks.find(sort=[('height', pymongo.DESCENDING)], limit=10)
-    ]
+    blockchain = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
+    recent_blocks = []
+    for block in Blocks.find(sort=[('height', pymongo.DESCENDING)], limit=10):
+        num_transactions = Transactions.find({'blockhash': block['hash']}).count()
+        block['num_transactions'] = num_transactions
+        recent_blocks.append(block);
+
     return render_template('index.html',
-                           blockchain=block,
+                           blockchain=blockchain,
                            recent_blocks=recent_blocks)
 
 

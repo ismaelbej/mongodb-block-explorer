@@ -33,7 +33,7 @@
                     <div class="column column-67">
                         <ul>
                             {% for block in recent_blocks %}
-                            <li><a href="{{ url_for('block', hash=block.hash) }}">Block {{ block.height }}</a></li>
+                            <li><a href="{{ url_for('block', hash=block.hash) }}">Block {{ block.height }}</a>: {{ block.num_transactions }} transactions</li>
                             {% endfor %}
                         </ul>
                     </div>
