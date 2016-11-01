@@ -37,10 +37,17 @@
                     <div class="column column-75">
                         <dl>
                             {% for output in transaction['out'] %}
-                            <dt>Address</dt>
-                            <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output['address'] }}</a></dd>
-                            <dt>Value</dt>
-                            <dd>{{ output['satoshis'] }}</dd>
+                            <dt>Address: <a href="{{ url_for('address', address=output['address']) }}">{{ output.address }}</a></dt>
+                            <dd>
+                                <dl>
+                                    <dt>Value</dt>
+                                    <dd>{{ output.satoshis }}</dd>
+                                    <dt>Index</dt>
+                                    <dd>{{ output.pos }}</dd>
+                                    <dt>Spent</dt>
+                                    <dd>{% if output.spent %}Yes{% else %}No{% endif %}</dd>
+                                </dl>
+                            </dd>
                             {% endfor %}
                         </dl>
                     </div>
