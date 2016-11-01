@@ -68,7 +68,27 @@ def transaction(txid):
 
 @app.route('/api/v1/address/<address>', methods=['GET'])
 def address(address):
-    pass
+    outputs = []
+    confirmed = 0;
+    for output in TxOutputs.find({'address': address, 'spent': False}):
+        confirmed += int(output['satoshis'])
+        outputs.append(output)
+    balance = {
+        'confirmed': { 'amount': confirmed },
+        'unconfirmed': { 'amount': 0 }
+    }
+    transactions = AddressTransaction.find({'address': address}) \
+        .sort('txtime', pymongo.DESCENDING).limit(10)
+    txs = []
+    for tx in transactions:
+        txs.append(tx)
+        tx['out'] = TxOutputs.find({'txid': tx['txid']},
+                                   sort=[('pos', pymongo.ASCENDING)])
+    return render_template('address.html',
+                           address=address,
+                           balance=balance,
+                           transactions=txs,
+                           outputs=outputs)
 
 
 @app.route('/api/v1/blockchaininfo', methods=['GET'])

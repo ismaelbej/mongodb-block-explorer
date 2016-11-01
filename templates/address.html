@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+        <main class="wrapper">
+            <section class="container" id="title">
+                <h3 class="title">Block Explorer</h5>
+            </section>
+
+            <section class="container" id="address-info">
+                <h5 class="title">Address info</h5>
+                <div class="row">
+                    <div class="column column-75">
+                        <dl>
+                            <dt>Address</dt>
+                            <dd><a href="{{ url_for('address', address=address) }}">{{ address }}</a></dd>
+                            <dt>Confirmed</dt>
+                            <dd>{{ balance.confirmed.amount }}</a></dd>
+                            <dt>Unconfirmed</dt>
+                            <dd>{{ balance.unconfirmed.amount }}</a></dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container" id="address-txs">
+                <h5 class="title">Recent transactions</h5>
+                <div class="row">
+                    <div class="column column-75">
+                        <dl>
+                            {% for tx in transactions %}
+                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dt>
+                            <dd>
+                                <dl>
+                                    {% for output in tx['out'] %}
+                                    <dt>Address</dt>
+                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output['address'] }}</a></dd>
+                                    <dt>Value</dt>
+                                    <dd>{{ output['satoshis'] }}</dd>
+                                    {% endfor %}
+                                </dl>
+                            </dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container" id="address-outputs">
+                <h5 class="title">Unspent outputs</h5>
+                <div class="row">
+                    <div class="column column-75">
+                      <dl>
+                          {% for output in outputs %}
+                          <dt>Transaction: <a href="{{ url_for('transaction', txid=output['txid']) }}">{{ output.txid }}</a></dt>
+                          <dd>
+                              <dl>
+                                  <dt>Value</dt>
+                                  <dd>{{ output.satoshis }}</dd>
+                                  <dt>Index</dt>
+                                  <dd>{{ output.pos }}</dd>
+                              </dl>
+                          </dd>
+                          {% endfor %}
+                      </dl>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                <section class="container">
+                </section>
+            </footer>
+        </main>
+{% endblock %}
