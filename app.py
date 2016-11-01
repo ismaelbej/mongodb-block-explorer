@@ -27,9 +27,11 @@ def index():
 
 @app.route('/block/<hash>')
 def block(hash):
-    block = Blocks.find_one({'hash': hash})
-    if int(block['height']) > 0:
-        prevblock = Blocks.find_one({'height': int(block['height']) - 1})
+    if len(hash) == 64:
+        block = Blocks.find_one({'hash': hash})
+    else:
+        block = Blocks.find_one({'height': int(hash)})
+    prevblock = Blocks.find_one({'height': int(block['height']) - 1})
     nextblock = Blocks.find_one({'height': int(block['height']) + 1})
     transactions = Transactions.find({'blockhash': block['hash']}) \
         .sort('blockindex', pymongo.ASCENDING)
