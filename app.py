@@ -13,7 +13,7 @@ Transactions = db['zectransactions']
 TxOutputs = db['zectxoutputs']
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     blockchain = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
     recent_blocks = []
@@ -28,7 +28,7 @@ def index():
                            recent_blocks=recent_blocks)
 
 
-@app.route('/block/<hash>')
+@app.route('/block/<hash>', methods=['GET'])
 def block(hash):
     if len(hash) == 64:
         block = Blocks.find_one({'hash': hash})
@@ -49,6 +49,26 @@ def block(hash):
                            block=block,
                            transactions=txs,
                            prevblock=prevblock,
+                           nextblock=nextblock)
+
+
+@app.route('/block_list/', methods=['GET'])
+def block_list():
+    start = int(request.args.get('start', 0))
+    limit = int(request.args.get('limit', 10))
+    block_list = []
+    for block in Blocks.find({'height': {'$gte': start}}).sort(
+            'height', pymongo.ASCENDING).limit(limit + 1):
+        num_transactions = Transactions.find(
+            {'blockhash': block['hash']}).count()
+        block['num_transactions'] = num_transactions
+        block_list.append(block)
+    nextblock = len(block_list) > limit
+    block_list = block_list[0:limit]
+    return render_template('block_list.html',
+                           block_list=block_list,
+                           start=start,
+                           limit=limit,
                            nextblock=nextblock)
 
 

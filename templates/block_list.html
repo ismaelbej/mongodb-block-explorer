@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+            <section class="container" id="block-list">
+                <h5 class="title">Blocks</h5>
+                <div class="row">
+                    <div class="column column-33">
+                        <ul>
+                            {% if start >= limit %}
+                            <li><a href="{{ url_for('block_list') }}?start={{ start - limit }}&limit={{ limit }}">Previous</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="column column-33">
+                        <ul>
+                            {% if nextblock %}
+                            <li><a href="{{ url_for('block_list') }}?start={{ start + limit }}&limit={{ limit }}">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column column-75">
+                        <ul>
+                            {% for block in block_list %}
+                            <li><a href="{{ url_for('block', hash=block.hash) }}">Block {{ block.height }}</a>: {{ block.num_transactions }} transactions</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+{% endblock %}
