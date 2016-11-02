@@ -7,6 +7,17 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/milligram/dist/milligram.min.css') }}">
     </head>
     <body>
+        <main class="wrapper">
+            <section class="container" id="title">
+                <h3 class="title"><a href="{{ url_for('index') }}">Block Explorer</a></h3>
+            </section>
+
         {% block content %}{% endblock %}
+
+            <footer class="footer">
+                <section class="container">
+                </section>
+            </footer>
+        </main>
     </body>
 </html>

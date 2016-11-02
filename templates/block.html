@@ -1,17 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-        <main class="wrapper">
-            <section class="container" id="title">
-                <h3 class="title">Block Explorer</h5>
-            </section>
-
             <section class="container" id="block-info">
                 <h5 class="title">Block Info</h5>
                 <div class="row">
                     <div class="column column-75">
                         <dl>
                             <dt>Hash</dt>
-                            <dd><a href="{{ url_for('block', hash=block['hash']) }}">{{ block['hash'] }}</a></dd>
+                            <dd><a href="{{ url_for('block', hash=block['hash']) }}">{{ block.hash }}</a></dd>
                             <dt>Height</dt>
                             <dd>{{ block.height }}</dd>
                             <dt>Difficulty</dt>
@@ -20,11 +15,11 @@
                             <dd>{{ block.time }}</dd>
                             {% if prevblock %}
                             <dt>Previous Block</dt>
-                            <dd><a href="{{ url_for('block', hash=prevblock['hash']) }}">Block {{ prevblock['height'] }}</a></dd>
+                            <dd><a href="{{ url_for('block', hash=prevblock['hash']) }}">Block {{ prevblock.height }}</a></dd>
                             {% endif %}
                             {% if nextblock %}
                             <dt>Next Block</dt>
-                            <dd><a href="{{ url_for('block', hash=nextblock['hash']) }}">Block {{ nextblock['height'] }}</a></dd>
+                            <dd><a href="{{ url_for('block', hash=nextblock['hash']) }}">Block {{ nextblock.height }}</a></dd>
                             {% endif %}
                         </dl>
                     </div>
@@ -37,14 +32,14 @@
                     <div class="column column-75">
                         <dl>
                             {% for tx in transactions %}
-                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dt>
+                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx.txid }}</a></dt>
                             <dd>
                                 <dl>
                                     {% for output in tx['out'] %}
                                     <dt>Address</dt>
-                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output['address'] }}</a></dd>
+                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output.address }}</a></dd>
                                     <dt>Value</dt>
-                                    <dd>{{ output['satoshis'] }}</dd>
+                                    <dd>{{ output.satoshis }}</dd>
                                     {% endfor %}
                                 </dl>
                             </dd>
@@ -53,10 +48,4 @@
                     </div>
                 </div>
             </section>
-
-            <footer class="footer">
-                <section class="container">
-                </section>
-            </footer>
-        </main>
 {% endblock %}

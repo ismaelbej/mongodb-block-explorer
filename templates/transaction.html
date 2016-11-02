@@ -1,42 +1,37 @@
 {% extends "layout.html" %}
 {% block content %}
-        <main class="wrapper">
-            <section class="container" id="title">
-                <h3 class="title">Block Explorer</h5>
-            </section>
-
-            <section class="container" id="block-info">
+            <section class="container" id="tx-info">
                 <h5 class="title">Transaction Info</h5>
                 <div class="row">
                     <div class="column column-75">
                         <dl>
                             <dt>Id</dt>
-                            <dd><a href="{{ url_for('transaction', txid=transaction['txid']) }}">{{ transaction['txid'] }}</a></dd>
+                            <dd><a href="{{ url_for('transaction', txid=transaction['txid']) }}">{{ transaction.txid }}</a></dd>
                             <dt>Block</dt>
-                            <dd><a href="{{ url_for('block', hash=transaction['blockhash']) }}">{{ transaction['blockhash'] }}</a></dd>
+                            <dd><a href="{{ url_for('block', hash=transaction['blockhash']) }}">{{ transaction.blockhash }}</a></dd>
                             <dt>Height</dt>
-                            <dd>{{ transaction['blockheight'] }}</dd>
+                            <dd>{{ transaction.blockheight }}</dd>
                             <dt>Date</dt>
-                            <dd>{{ transaction['time'] }}</dd>
+                            <dd>{{ transaction.time }}</dd>
                             {% if prevtransaction %}
                             <dt>Previous Transaction</dt>
-                            <dd><a href="{{ url_for('transaction', txid=prevtransaction['txid']) }}">Transaction {{ prevtransaction['blockindex'] }}</a></dd>
+                            <dd><a href="{{ url_for('transaction', txid=prevtransaction['txid']) }}">Transaction {{ prevtransaction.blockindex }}</a></dd>
                             {% endif %}
                             {% if nexttransaction %}
                             <dt>Next Transaction</dt>
-                            <dd><a href="{{ url_for('transaction', hash=nexttransaction['txid']) }}">Transaction {{ nexttransaction['blockindex'] }}</a></dd>
+                            <dd><a href="{{ url_for('transaction', hash=nexttransaction['txid']) }}">Transaction {{ nexttransaction.blockindex }}</a></dd>
                             {% endif %}
                         </dl>
                     </div>
                 </div>
             </section>
 
-            <section class="container" id="block-txs">
+            <section class="container" id="tx-outputs">
                 <h5 class="title">Transaction Outputs</h5>
                 <div class="row">
                     <div class="column column-75">
                         <dl>
-                            {% for output in transaction['out'] %}
+                            {% for output in transaction.out %}
                             <dt>Address: <a href="{{ url_for('address', address=output['address']) }}">{{ output.address }}</a></dt>
                             <dd>
                                 <dl>
@@ -53,10 +48,4 @@
                     </div>
                 </div>
             </section>
-
-            <footer class="footer">
-                <section class="container">
-                </section>
-            </footer>
-        </main>
 {% endblock %}
