@@ -5,12 +5,15 @@ import pymongo
 
 app = Flask(__name__)
 
+DB_NAME = 'zcashdb'
+DB_PREFIX = 'zec'
+
 client = pymongo.MongoClient()
-db = client.zcashdb
-AddressTransaction = db['zecaddresstransactions']
-Blocks = db['zecblocks']
-Transactions = db['zectransactions']
-TxOutputs = db['zectxoutputs']
+db = client[DB_NAME]
+AddressTransaction = db[DB_PREFIX + 'addresstransactions']
+Blocks = db[DB_PREFIX + 'blocks']
+Transactions = db[DB_PREFIX + 'transactions']
+TxOutputs = db[DB_PREFIX + 'txoutputs']
 
 
 @app.route('/', methods=['GET'])
