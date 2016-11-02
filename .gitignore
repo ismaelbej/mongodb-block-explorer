@@ -1,3 +1,3 @@
-venv/
+pyenv/
 node_modules/
 static/bower_components/

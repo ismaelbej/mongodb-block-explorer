@@ -18,9 +18,10 @@ def index():
     blockchain = Blocks.find_one(sort=[('height', pymongo.DESCENDING)])
     recent_blocks = []
     for block in Blocks.find(sort=[('height', pymongo.DESCENDING)], limit=10):
-        num_transactions = Transactions.find({'blockhash': block['hash']}).count()
+        num_transactions = Transactions.find(
+            {'blockhash': block['hash']}).count()
         block['num_transactions'] = num_transactions
-        recent_blocks.append(block);
+        recent_blocks.append(block)
 
     return render_template('index.html',
                            blockchain=blockchain,
@@ -33,8 +34,10 @@ def block(hash):
         block = Blocks.find_one({'hash': hash})
     else:
         block = Blocks.find_one({'height': int(hash)})
-    prevblock = Blocks.find_one({'height': int(block['height']) - 1})
-    nextblock = Blocks.find_one({'height': int(block['height']) + 1})
+    prevblock = Blocks.find_one({'height': {"$lt": int(block['height'])}},
+                                sort=[('height', pymongo.DESCENDING)])
+    nextblock = Blocks.find_one({'height': {"$gt": int(block['height'])}},
+                                sort=[('height', pymongo.ASCENDING)])
     transactions = Transactions.find({'blockhash': block['hash']}) \
         .sort('blockindex', pymongo.ASCENDING)
     txs = []
@@ -49,7 +52,7 @@ def block(hash):
                            nextblock=nextblock)
 
 
-@app.route('/api/v1/transaction/<txid>', methods=['GET'])
+@app.route('/transaction/<txid>', methods=['GET'])
 def transaction(txid):
     transaction = Transactions.find_one({'txid': txid})
     transaction['out'] = TxOutputs.find({'txid': transaction['txid']},
@@ -68,16 +71,16 @@ def transaction(txid):
                            nexttransaction=nexttransaction)
 
 
-@app.route('/api/v1/address/<address>', methods=['GET'])
+@app.route('/address/<address>', methods=['GET'])
 def address(address):
     outputs = []
-    confirmed = 0;
+    confirmed = 0
     for output in TxOutputs.find({'address': address, 'spent': False}):
         confirmed += int(output['satoshis'])
         outputs.append(output)
     balance = {
-        'confirmed': { 'amount': confirmed },
-        'unconfirmed': { 'amount': 0 }
+        'confirmed': {'amount': confirmed},
+        'unconfirmed': {'amount': 0}
     }
     transactions = AddressTransaction.find({'address': address}) \
         .sort('txtime', pymongo.DESCENDING).limit(10)
