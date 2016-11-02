@@ -75,7 +75,8 @@ def transaction(txid):
 def address(address):
     outputs = []
     confirmed = 0
-    for output in TxOutputs.find({'address': address, 'spent': False}):
+    for output in TxOutputs.find({'address': address, 'spent': False}) \
+            .limit(10):
         confirmed += int(output['satoshis'])
         outputs.append(output)
     balance = {
@@ -86,9 +87,10 @@ def address(address):
         .sort('txtime', pymongo.DESCENDING).limit(10)
     txs = []
     for tx in transactions:
-        txs.append(tx)
+        tx = Transactions.find_one({'txid': tx['txid']})
         tx['out'] = TxOutputs.find({'txid': tx['txid']},
                                    sort=[('pos', pymongo.ASCENDING)])
+        txs.append(tx)
     return render_template('address.html',
                            address=address,
                            balance=balance,

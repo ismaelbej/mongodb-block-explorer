@@ -22,14 +22,20 @@
                     <div class="column column-75">
                         <dl>
                             {% for tx in transactions %}
-                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx['txid'] }}</a></dt>
+                            <dt>Transaction: <a href="{{ url_for('transaction', txid=tx['txid']) }}">{{ tx.txid }}</a></dt>
                             <dd>
                                 <dl>
-                                    {% for output in tx['out'] %}
+                                    <dt>Block</dt>
+                                    <dd><a href="{{ url_for('block', hash=tx['blockhash']) }}">{{ tx.blockhash }}</a></dd>
+                                    <dt>Date</dt>
+                                    <dd>{{ tx.time }}</dd>
+                                    {% for output in tx.out %}
                                     <dt>Address</dt>
-                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output['address'] }}</a></dd>
+                                    <dd><a href="{{ url_for('address', address=output['address']) }}">{{ output.address }}</a></dd>
                                     <dt>Value</dt>
-                                    <dd>{{ output['satoshis'] }}</dd>
+                                    <dd>{{ output.satoshis }}</dd>
+                                    <dt>Spent</dt>
+                                    <dd>{% if output.spent %}Yes{% else %}No{% endif %}</dd>
                                     {% endfor %}
                                 </dl>
                             </dd>
